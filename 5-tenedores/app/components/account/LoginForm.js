@@ -1,27 +1,23 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Input, Icon, Button} from 'react-native-elements';
+import { Input, Icon, Button } from 'react-native-elements';
 import { validateEmail } from '../../utils/Validations';
-import Loading from '../Loading';
 import { size, isEmpty } from 'lodash';
-import * as firebase from 'firebase';
-import { useNavigation } from '@react-navigation/native';
 
-export default function RegisterForm(props) {
+export default function LoginForm(props) {
     const { toastRef } = props;
     const [showPass, setShowPass] = useState(false);
-    const [showRepeatPass, setShowRepeatPass] = useState(false);
-    const [formData, setFormData] = useState(defaultFormValue());
-    const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
+    const [formData, setFormData] = useState(defaultFormValue()); 
+
+    const onChange = (e, type) => {
+        setFormData({...formData, [type]: e.nativeEvent.text})
+    };
 
     const onSubmit = () => {
-        if (isEmpty(formData.email) || isEmpty(formData.password) || isEmpty(formData.repeatPassword)) {
+        /*if (isEmpty(formData.email) || isEmpty(formData.password)) {
             toastRef.current.show('Todos los campos son obligatorios');
         }else if (!validateEmail(formData.email)) {
             toastRef.current.show('El email no es correcto');
-        }else if (formData.password !== formData.repeatPassword) {
-            toastRef.current.show('Las contraseñas tienen que ser iguales');
         }else if (size(formData.password) < 6) {
             toastRef.current.show('La contaseña tiene que tener al menos 6 caracteres');
         }else {
@@ -37,11 +33,9 @@ export default function RegisterForm(props) {
                 setLoading(false);
                 toastRef.current.show('El email ya está en uso')
             });
-        }
-    };
-
-    const onChange = (e, type) => {
-        setFormData({...formData, [type]: e.nativeEvent.text})
+        };*/
+            //console.log(formData)
+            toastRef.current.show('Todos los campos son obligatorios');
     };
 
     return (
@@ -73,28 +67,12 @@ export default function RegisterForm(props) {
                     />
                 }
             />
-            <Input
-                placeholder='Repetir contraseña'
-                containerStyle={styles.inputForm}
-                onChange={(e) => onChange(e, 'repeatPassword')}
-                password={true}
-                secureTextEntry={showRepeatPass ? false : true}
-                rightIcon={
-                    <Icon
-                        type='material-community'
-                        name={showRepeatPass ? 'eye-off-outline' : 'eye-outline'}
-                        iconStyle={styles.iconRight}
-                        onPress={() => setShowRepeatPass(!showRepeatPass)}
-                    />
-                }
-            />
             <Button
-                title='Unirse'
-                containerStyle={styles.btnContainerRegister}
-                buttonStyle={styles.btnRegister}
+                title='Iniciar sesión'
+                containerStyle={styles.btnContainerLogin}
+                buttonStyle={styles.btnLogin}
                 onPress={onSubmit}
             />
-            <Loading isVisible={loading} text='Creando cuenta'/>
         </View>
     );
 };
@@ -103,7 +81,6 @@ function defaultFormValue(){
     return {
         email: '',
         password: '',
-        repeatPassword: '',
     };
 };
 
@@ -118,14 +95,14 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop: 20,
     },
-    btnContainerRegister: {
+    btnContainerLogin: {
         marginTop: 20,
         width: '95%',
     },
-    btnRegister: {
+    btnLogin: {
         backgroundColor: '#00a680',
     },
     iconRight: {
         color: '#c1c1c1',
     }
-});
+})
