@@ -1,5 +1,5 @@
 import React, { useRef }from 'react';
-import { StyleSheet, View, ScrollView, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';

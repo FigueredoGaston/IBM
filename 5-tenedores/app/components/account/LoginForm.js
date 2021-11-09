@@ -1,49 +1,53 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Input, Icon, Button } from 'react-native-elements';
-import { validateEmail } from '../../utils/Validations';
-import { size, isEmpty } from 'lodash';
+    import React, { useState } from 'react';
+    import { StyleSheet, View } from 'react-native';
+    import { Input, Icon, Button} from 'react-native-elements';
+    import { useNavigation } from '@react-navigation/native';
+    import { validateEmail } from '../../utils/Validations';
+    import Loading from '../Loading';
+    import { size, isEmpty } from 'lodash';
+    import * as firebase from 'firebase';
 
-export default function LoginForm(props) {
-    const { toastRef } = props;
-    const [showPass, setShowPass] = useState(false);
-    const [formData, setFormData] = useState(defaultFormValue()); 
 
-    const onChange = (e, type) => {
-        setFormData({...formData, [type]: e.nativeEvent.text})
-    };
+    export default function RegisterForm(props) {
+        const { toastRef } = props;
+        const [showPass, setShowPass] = useState(false);
+        const [formData, setFormData] = useState(defaultFormValue());
+        const [loading, setLoading] = useState(false);
+        const navigation = useNavigation();
 
-    const onSubmit = () => {
-        /*if (isEmpty(formData.email) || isEmpty(formData.password)) {
-            toastRef.current.show('Todos los campos son obligatorios');
-        }else if (!validateEmail(formData.email)) {
-            toastRef.current.show('El email no es correcto');
-        }else if (size(formData.password) < 6) {
-            toastRef.current.show('La contaseña tiene que tener al menos 6 caracteres');
-        }else {
-            setLoading(true);
-            firebase
-            .auth()
-            .createUserWithEmailAndPassword(formData.email, formData.password)
-            .then(() => {
-                setLoading(false);
-                navigation.navigate('accounts');
-            })
-            .catch(() => {
-                setLoading(false);
-                toastRef.current.show('El email ya está en uso')
-            });
-        };*/
-            //console.log(formData)
-            toastRef.current.show('Todos los campos son obligatorios');
-    };
+        const onSubmit = () => {
+            if (isEmpty(formData.email) || isEmpty(formData.password)) {
+                toastRef.current.show('Todos los campos son obligatorios');
+            }else if (!validateEmail(formData.email)) {
+                toastRef.current.show('El email no es correcto');
+            }else if (size(formData.password) < 6) {
+                toastRef.current.show('La contaseña tiene que tener al menos 6 caracteres');
+            }else {
+                setLoading(true);
+                firebase
+                .auth()
+                .signInWithEmailAndPassword(formData.email, formData.password)
+                .then(() => {
+                    setLoading(false);
+                    navigation.navigate('accounts');
+                })
+                .catch(() => {
+                    setLoading(false);
+                    toastRef.current.show('Email o contraseña incorrecta')
+                });
+            }
+        };
+
+        const onChange = (e, type) => {
+            setFormData({...formData, [type]: e.nativeEvent.text})
+        };
 
     return (
         <View style={styles.formContainer}>
             <Input
                 placeholder='Correo electrónico'
                 containerStyle={styles.inputForm}
-                onChange={e => onChange(e, 'email')}
+                onChange={(e) => onChange(e, 'email')}
                 rightIcon={
                     <Icon
                         type='material-community'
@@ -55,8 +59,8 @@ export default function LoginForm(props) {
             <Input
                 placeholder='Constraseña'
                 containerStyle={styles.inputForm}
-                onChange={(e) => onChange(e, 'password')}
                 password={true}
+                onChange={(e) => onChange(e, 'password')}
                 secureTextEntry={showPass ? false : true}
                 rightIcon={
                     <Icon
@@ -73,6 +77,7 @@ export default function LoginForm(props) {
                 buttonStyle={styles.btnLogin}
                 onPress={onSubmit}
             />
+            <Loading isVisible={loading} text='Iniciando sesión'/>
         </View>
     );
 };
